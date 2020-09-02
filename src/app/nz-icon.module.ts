@@ -5,6 +5,8 @@ import {
   UserOutline,
   LaptopOutline,
   NotificationOutline,
+  DeleteOutline,
+  DownloadOutline,
 } from '@ant-design/icons-angular/icons';
 import { NgModule } from '@angular/core';
 
@@ -12,6 +14,8 @@ const icons: IconDefinition[] = [
   UserOutline,
   LaptopOutline,
   NotificationOutline,
+  DeleteOutline,
+  DownloadOutline,
 ];
 
 @NgModule({
