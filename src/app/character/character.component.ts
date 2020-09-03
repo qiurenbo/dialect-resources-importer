@@ -22,7 +22,6 @@ import {
         {{ uploading ? '上传中.' : '开始上传' }}
       </button>
     </div>
-    <div *ngFor="let file of fileList">{{ file | json }}</div>
   `,
   styleUrls: ['./character.component.scss'],
 })
@@ -58,6 +57,7 @@ export class CharacterComponent implements OnInit {
   handleUpload() {
     let uploadFileList = new UploadFile();
     this.fileList.forEach((file) => {
+      console.log(file);
       let audioFile = this.createAudioFile(file);
       if (!uploadFileList[audioFile.name]) {
         uploadFileList[audioFile.name] = [];
@@ -65,8 +65,10 @@ export class CharacterComponent implements OnInit {
       uploadFileList[audioFile.name].push(audioFile);
     });
 
-    this.chService.addCharacters(uploadFileList).subscribe((msg) => {
-      console.log(msg);
+    this.uploading = true;
+    this.chService.addCharacters(uploadFileList).subscribe(() => {
+      this.uploading = false;
+      this.fileList = [];
     });
   }
 }

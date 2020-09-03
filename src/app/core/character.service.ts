@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CoreModule } from './core.module';
 import { HttpClient } from '@angular/common/http';
-import { Observable, zip, forkJoin, concat } from 'rxjs';
+import { Observable, zip, Subject, observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 export class AudioFile {
@@ -19,17 +19,30 @@ export class UploadFile {
 @Injectable({ providedIn: CoreModule })
 export class CharacterService {
   files: UploadFile;
-
   constructor(private http: HttpClient) {}
 
   addCharacters(files: UploadFile): Observable<any> {
     this.files = files;
+    let upload$ = new Subject();
+    this.addAudios()
+      .pipe(
+        map((reps: any) => {
+          for (const rep of reps) {
+            this.files[rep.name].idList!.push(rep.id);
+          }
+          return reps;
+        })
+      )
+      .subscribe(() => {
+        this.relateAudiosAndCharacters().subscribe(() => {
+          upload$.next(false);
+        });
+      });
 
-    // first post audio and then relate audio and current characters
-    return forkJoin(concat(this.addAudios(), this.relateAudiosAndCharacters()));
+    return upload$;
   }
 
-  private addAudios(): Observable<any> {
+  addAudios(): Observable<any> {
     const reqArray = [];
     for (const name in this.files) {
       if (Object.prototype.hasOwnProperty.call(this.files, name)) {
@@ -55,20 +68,10 @@ export class CharacterService {
       }
     }
 
-    return zip(...reqArray).pipe(
-      map((reps: any) => {
-        for (const rep of reps) {
-          if (!this.files[rep.name].idList) {
-            this.files[rep.name].idList = [];
-          }
-          this.files[rep.name].idList.push(rep.id);
-        }
-        return reps;
-      })
-    );
+    return zip(...reqArray);
   }
 
-  private relateAudiosAndCharacters() {
+  relateAudiosAndCharacters(): Observable<any> {
     const reqArray = [];
     for (const name in this.files) {
       if (Object.prototype.hasOwnProperty.call(this.files, name)) {
@@ -76,16 +79,13 @@ export class CharacterService {
 
         reqArray.push(
           this.http.post(
-            '/audios',
-            this.http.post(
-              '/characters',
-              JSON.stringify({ audios: audioFiles.idList, name: name })
-            )
+            '/characters',
+            JSON.stringify({ audios: audioFiles.idList, name: name })
           )
         );
       }
     }
 
-    return forkJoin(...reqArray);
+    return zip(...reqArray);
   }
 }
