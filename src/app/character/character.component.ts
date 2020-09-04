@@ -15,7 +15,9 @@ import {
         [(nzFileList)]="fileList"
         [nzBeforeUpload]="beforeUpload"
       >
-        <button nz-button><i nz-icon nzType="upload"></i>选择文件夹</button>
+        <button nz-button (click)="clearFileList()">
+          <i nz-icon nzType="upload"></i>选择文件夹
+        </button>
       </nz-upload>
 
       <button nz-button (click)="handleUpload()">
@@ -39,6 +41,10 @@ export class CharacterComponent implements OnInit {
     this.fileList = this.fileList.concat(file);
     return false;
   };
+
+  clearFileList(): void {
+    this.fileList = [];
+  }
 
   createAudioFile(file: NzUploadFile) {
     const audioFile = new AudioFile();
@@ -68,7 +74,6 @@ export class CharacterComponent implements OnInit {
     this.uploading = true;
     this.chService.addCharacters(uploadFileList).subscribe(() => {
       this.uploading = false;
-      this.fileList = [];
     });
   }
 }

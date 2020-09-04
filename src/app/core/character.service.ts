@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CoreModule } from './core.module';
 import { HttpClient } from '@angular/common/http';
-import { Observable, zip, Subject, observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, zip } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 export class AudioFile {
   sex: string;
@@ -18,35 +18,25 @@ export class UploadFile {
 }
 @Injectable({ providedIn: CoreModule })
 export class CharacterService {
-  files: UploadFile;
   constructor(private http: HttpClient) {}
 
   addCharacters(files: UploadFile): Observable<any> {
-    this.files = files;
-    let upload$ = new Subject();
-    this.addAudios()
-      .pipe(
-        map((reps: any) => {
-          for (const rep of reps) {
-            this.files[rep.name].idList!.push(rep.id);
-          }
-          return reps;
-        })
-      )
-      .subscribe(() => {
-        this.relateAudiosAndCharacters().subscribe(() => {
-          upload$.next(false);
-        });
-      });
-
-    return upload$;
+    return this.addAudios(files).pipe(
+      map((reps: any) => {
+        for (const rep of reps) {
+          files[rep.name].idList!.push(rep.id);
+        }
+        return reps;
+      }),
+      switchMap(() => this.relateAudiosAndCharacters(files))
+    );
   }
 
-  addAudios(): Observable<any> {
+  addAudios(files): Observable<any> {
     const reqArray = [];
-    for (const name in this.files) {
-      if (Object.prototype.hasOwnProperty.call(this.files, name)) {
-        const audioFiles: any = this.files[name];
+    for (const name in files) {
+      if (Object.prototype.hasOwnProperty.call(files, name)) {
+        const audioFiles: any = files[name];
         // store post audio id by response
         audioFiles.idList = [];
         for (let audioFile of audioFiles) {
@@ -71,11 +61,11 @@ export class CharacterService {
     return zip(...reqArray);
   }
 
-  relateAudiosAndCharacters(): Observable<any> {
+  relateAudiosAndCharacters(files): Observable<any> {
     const reqArray = [];
-    for (const name in this.files) {
-      if (Object.prototype.hasOwnProperty.call(this.files, name)) {
-        const audioFiles: any = this.files[name];
+    for (const name in files) {
+      if (Object.prototype.hasOwnProperty.call(files, name)) {
+        const audioFiles: any = files[name];
 
         reqArray.push(
           this.http.post(
