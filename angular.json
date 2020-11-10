@@ -61,8 +61,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "electron-ng-zorro-antd-boilerplate:build",
-            "proxyConfig": "proxy.conf.json"
+            "browserTarget": "electron-ng-zorro-antd-boilerplate:build"
           },
           "configurations": {
             "production": {

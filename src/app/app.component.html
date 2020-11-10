@@ -16,17 +16,15 @@
     <nz-layout class="inner-layout">
       <nz-sider nzWidth="200px" nzTheme="light">
         <ul nz-menu nzMode="inline" class="sider-menu">
-          <li nz-submenu nzOpen nzTitle="音频" nzIcon="user">
+          <li nz-submenu nzOpen nzTitle="类型" nzIcon="user">
             <ul>
-              <li nz-menu-item nzSelected>
-                <a routerLink="/character">字</a>
-              </li>
-              <li nz-menu-item>词</li>
-              <li nz-menu-item>句</li>
-              <li nz-menu-item>文</li>
+              <li nz-menu-item><a routerLink="/word">词</a></li>
+              <li nz-menu-item><a routerLink="/sentence">句</a></li>
+              <li nz-menu-item><a routerLink="/story">文</a></li>
+              <li nz-menu-item><a routerLink="/picture">图</a></li>
             </ul>
           </li>
-          <li nz-submenu nzTitle="subnav 2" nzIcon="laptop">
+          <!-- <li nz-submenu nzTitle="subnav 2" nzIcon="laptop">
             <ul>
               <li nz-menu-item>option5</li>
               <li nz-menu-item>option6</li>
@@ -41,7 +39,7 @@
               <li nz-menu-item>option11</li>
               <li nz-menu-item>option12</li>
             </ul>
-          </li>
+          </li> -->
         </ul>
       </nz-sider>
       <nz-content class="inner-content"

@@ -1,10 +1,15 @@
 {
   "/audios": {
-    "target": "http://localhost:1337",
+    "target": "http://10.1.5.54/api",
+    "changeOrigin": true,
     "secure": false
   },
   "/characters": {
-    "target": "http://localhost:1337",
+    "target": "http://10.1.5.54/api",
+    "secure": false
+  },
+  "/words": {
+    "target": "http://10.1.5.54/api",
     "secure": false
   }
 }

@@ -1,14 +1,20 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { CharacterComponent } from './character/character.component';
+import { WordComponent } from './word/word.component';
+import { PictureComponent } from './picture/picture.component';
+import { SentenceComponent } from './sentence/sentence.component';
+import { StoryComponent } from './story/story.component';
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: 'character', component: CharacterComponent },
+  { path: 'word', component: WordComponent },
+  { path: 'picture', component: PictureComponent },
+  { path: 'sentence', component: SentenceComponent },
+  { path: 'story', component: StoryComponent },
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'character',
+    redirectTo: 'word',
   },
 ];
 
