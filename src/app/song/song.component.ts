@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NzUploadFile } from 'ng-zorro-antd';
 import { AudioService } from '../core/audio.service';
 @Component({
-  selector: 'app-story',
+  selector: 'app-song',
   template: ` <div class="tool-bar">
     <nz-upload
       [nzDirectory]="true"
@@ -10,7 +10,7 @@ import { AudioService } from '../core/audio.service';
       [nzBeforeUpload]="beforeUpload"
     >
       <button nz-button (click)="clearFileList()">
-        <i nz-icon nzType="upload"></i>选择-故事-文件夹
+        <i nz-icon nzType="upload"></i>选择-民谣-文件夹
       </button>
     </nz-upload>
 
@@ -18,9 +18,9 @@ import { AudioService } from '../core/audio.service';
       {{ uploading ? '上传中.' : '开始上传' }}
     </button>
   </div>`,
-  styleUrls: ['./story.component.scss'],
+  styleUrls: ['./song.component.scss'],
 })
-export class StoryComponent implements OnInit {
+export class SongComponent implements OnInit {
   fileList: NzUploadFile[] = [];
 
   uploading = false;
@@ -41,7 +41,7 @@ export class StoryComponent implements OnInit {
   handleUpload() {
     this.uploading = true;
 
-    this.audioService.uploadStories(this.fileList).subscribe(() => {
+    this.audioService.uploadSongs(this.fileList).subscribe(() => {
       this.uploading = false;
       this.clearFileList();
     });

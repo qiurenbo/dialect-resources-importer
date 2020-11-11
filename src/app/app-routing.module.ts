@@ -5,12 +5,15 @@ import { WordComponent } from './word/word.component';
 import { PictureComponent } from './picture/picture.component';
 import { SentenceComponent } from './sentence/sentence.component';
 import { StoryComponent } from './story/story.component';
+import { SongComponent } from './song/song.component';
+
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'word', component: WordComponent },
   { path: 'picture', component: PictureComponent },
   { path: 'sentence', component: SentenceComponent },
   { path: 'story', component: StoryComponent },
+  { path: 'song', component: SongComponent },
   {
     path: '',
     pathMatch: 'full',

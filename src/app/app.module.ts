@@ -14,6 +14,7 @@ import { CoreModule } from './core/core.module';
 import { WordComponent } from './word/word.component';
 import { SentenceComponent } from './sentence/sentence.component';
 import { StoryComponent } from './story/story.component';
+import { SongComponent } from './song/song.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,6 +24,7 @@ import { StoryComponent } from './story/story.component';
     PictureComponent,
     SentenceComponent,
     StoryComponent,
+    SongComponent,
   ],
   imports: [
     BrowserModule,

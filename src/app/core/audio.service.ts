@@ -134,6 +134,10 @@ export class AudioService {
     );
   }
 
+  uploadSongs(fileList: NzUploadFile[]) {
+    return this.proxy(this.parse(fileList), `${environment.apiEndPoint}/songs`);
+  }
+
   private proxy(files: any, endpoint: string) {
     return this.addAudios(files).pipe(
       map((reps: any) => {
