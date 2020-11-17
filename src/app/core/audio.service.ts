@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, zip } from 'rxjs';
+import { Observable, zip, concat, forkJoin } from 'rxjs';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -49,13 +49,20 @@ export class AudioService {
           formData.append('files.audio', audioFile.file);
 
           reqArray.push(
-            this.http.post(`${environment.apiEndPoint}/audios`, formData)
+            this.http.post(`${environment.apiEndPoint}/audios`, formData).pipe(
+              map((rep: any) => {
+                console.log(rep);
+                files[rep.name].idList!.push(rep.id);
+                console.log(files[rep.name]);
+                return rep;
+              })
+            )
           );
         }
       }
     }
 
-    return zip(...reqArray);
+    return forkJoin(concat(...reqArray));
   }
 
   /**
@@ -65,15 +72,25 @@ export class AudioService {
    */
   private relateAudiosAndItems(files: any, endpoint: string): Observable<any> {
     const reqArray = [];
+    console.log('关联...');
     for (const name in files) {
       if (Object.prototype.hasOwnProperty.call(files, name)) {
         const audioFiles: any = files[name];
-
+        console.log('关联 name:' + name + ':' + endpoint);
+        console.log(audioFiles);
         reqArray.push(
-          this.http.post(
-            endpoint,
-            JSON.stringify({ audios: audioFiles.idList, name: name })
-          )
+          this.http
+            .post(
+              endpoint,
+              JSON.stringify({ audios: audioFiles.idList, name: name })
+            )
+            .pipe(
+              map((rep: any) => {
+                console.log(rep);
+                console.log('上传成功');
+                return rep;
+              })
+            )
         );
       }
     }
@@ -87,7 +104,12 @@ export class AudioService {
    */
   private createAudioFile(file: NzUploadFile) {
     const audioFile = new AudioFile();
-    const names = file.name.split('+');
+    const names = file.name.replace(/＋/g, '+').split('+');
+
+    if (names.length != 5) {
+      console.log(names);
+      throw 'audio error';
+    }
 
     audioFile.region = names[0];
     audioFile.author = names[1];
@@ -105,13 +127,17 @@ export class AudioService {
    */
   private parse(fileList: NzUploadFile[]) {
     let uploadFileList = new UploadFile();
-    fileList.forEach((file) => {
-      let audioFile = this.createAudioFile(file);
-      if (!uploadFileList[audioFile.name]) {
-        uploadFileList[audioFile.name] = [];
+    for (const file of fileList) {
+      try {
+        let audioFile = this.createAudioFile(file);
+        if (!uploadFileList[audioFile.name]) {
+          uploadFileList[audioFile.name] = [];
+        }
+        uploadFileList[audioFile.name].push(audioFile);
+      } catch {
+        console.log('skip unSupport audio');
       }
-      uploadFileList[audioFile.name].push(audioFile);
-    });
+    }
 
     return uploadFileList;
   }
@@ -140,12 +166,6 @@ export class AudioService {
 
   private proxy(files: any, endpoint: string) {
     return this.addAudios(files).pipe(
-      map((reps: any) => {
-        for (const rep of reps) {
-          files[rep.name].idList!.push(rep.id);
-        }
-        return reps;
-      }),
       switchMap(() => this.relateAudiosAndItems(files, endpoint))
     );
   }
